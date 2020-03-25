@@ -1,0 +1,9 @@
+### Example user template
+# IntelliJ project files
+.idea
+
+### Python template
+# Environments
+/env
+/venv/
+/anyclass/migrations/
