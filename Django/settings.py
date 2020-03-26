@@ -22,6 +22,8 @@ config.read('env')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+THREAD = True
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config['DEFAULT']['SECRET_KEY']
 
@@ -59,7 +61,7 @@ ROOT_URLCONF = 'Django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'static')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
