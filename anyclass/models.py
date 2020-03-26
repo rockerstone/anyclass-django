@@ -10,6 +10,8 @@ class Student(models.Model):
     college = models.CharField(max_length=100, default='')
     major = models.CharField(max_length=100, default='')
     student_class = models.CharField(max_length=100, default='')
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "%s %s" % (self.real_name, self.student_id)
@@ -33,6 +35,8 @@ class Act(models.Model):
     time = models.CharField(max_length=255, default='')
     description = models.CharField(max_length=255, default='')
     leader = models.ForeignKey('Student', on_delete=models.CASCADE)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title

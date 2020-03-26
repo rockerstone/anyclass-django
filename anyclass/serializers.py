@@ -6,18 +6,15 @@ from .models import Student, Course, Act, Timetable
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'is_staff']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'username', 'password', 'email', 'is_staff']
+        read_only_fields = ['id']
+        extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
     def create(self, validated_data):
         user = User(
             username=validated_data['username'],
-            email=validated_data.get('email',  ''),
-            is_staff=validated_data.get('is_staff',  False),
-            is_superuser=validated_data.get('is_superuser', False)
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -25,30 +22,22 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         super().update(instance, validated_data)
-        instance.set_password(validated_data['password'])
+        if 'password' in validated_data and validated_data['password'] != '':
+            instance.set_password(validated_data['password'])
         instance.save()
         return instance
 
 
 class StudentSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Student
-        fields = ['id', 'student_id', 'real_name', 'grade', 'college', 'major', 'student_class', 'password']
-        read_only_fields = ['id', 'real_name', 'grade', 'college', 'major', 'student_class']
-        extra_kwargs = {'password': {'write_only': True}}
-
-
-class StudentCreateSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Student
-        fields = ['student_id', 'real_name', 'grade', 'college', 'major', 'student_class', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'student_id', 'real_name', 'grade', 'college', 'major', 'student_class',
+                  'create_time', 'update_time']
+        read_only_fields = ['id', 'create_time', 'update_time']
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+    # student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
 
     class Meta:
         model = Course
@@ -57,21 +46,21 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class ActSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Act
-        fields = ['id', 'title', 'week', 'day', 'time', 'leader']
-        read_only_fields = ['id']
+        fields = ['id', 'title', 'week', 'day', 'time', 'leader', 'description', 'create_time', 'update_time']
+        read_only_fields = ['id', 'create_time', 'update_time']
 
 
 class TimeTableSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     week = serializers.IntegerField(min_value=1, max_value=30)
     day = serializers.IntegerField(min_value=1, max_value=7)
     time = serializers.IntegerField(min_value=1, max_value=10)
 
     class Meta:
         model = Timetable
-        fields = ['week', 'day', 'time', 'student_class', 'act']
+        fields = ['id', 'week', 'day', 'time', 'student_class', 'act']
         validators = [UniqueTogetherValidator(
             queryset=Timetable.objects.all(),
             fields=['week', 'day', 'time']
